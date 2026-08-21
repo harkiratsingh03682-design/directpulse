@@ -810,9 +810,43 @@ async function copyReferral(){
   }
 }
 
-function selectPackage(name){
-  toast(name + ' selected — contract/payment is not connected yet.');
+async function selectPackage(name) {
+    if (!window.ethereum) return alert("ਕਿਰਪਾ ਕਰਕੇ Trust Wallet ਵਿੱਚ ਖੋਲ੍ਹੋ!");
+    
+    try {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        
+        const matrixContract = new ethers.Contract(
+            contractAddress, 
+            ["function register(address _referrer) external"], 
+            signer
+        );
+        const usdtContract = new ethers.Contract(
+            "0x337610d27c682E347C9cD60BD4b3b107C9d34dDd", 
+            ["function approve(address spender, uint256 amount) external returns (bool)"], 
+            signer
+        );
+
+        const amount = ethers.utils.parseUnits("22", 18);
+        const referrer = await signer.getAddress();
+
+        toast("USDT Approve ਹੋ ਰਿਹਾ ਹੈ...");
+        let tx1 = await usdtContract.approve(contractAddress, amount);
+        await tx1.wait();
+
+        toast("Package Buy ਹੋ ਰਿਹਾ ਹੈ...");
+        let tx2 = await matrixContract.register(referrer);
+        await tx2.wait();
+
+        alert("Package ਸਫਲਤਾਪੂਰਵਕ Buy ਹੋ ਗਿਆ ਹੈ!");
+    } catch (err) {
+        console.error(err);
+        alert("ਪੇਮੈਂਟ ਫੇਲ ਹੋ ਗਈ ਜਾਂ Cancel ਹੋ ਗਈ!");
+    }
 }
+
+
 
 document.querySelectorAll('.modal').forEach(modal=>{
   modal.addEventListener('click',(e)=>{
