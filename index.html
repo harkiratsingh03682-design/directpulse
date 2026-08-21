@@ -797,26 +797,14 @@ async function connectWallet(){
   }
 }
 
-async function copyReferral(){
-  const value = $('refLink').value;
-
-  try{
-    await navigator.clipboard.writeText(value);
-    toast('Referral link copied');
-  }catch(e){
-    $('refLink').select();
-    document.execCommand('copy');
-    toast('Referral link copied');
-  }
-}
-
+<button class="btn" onclick="selectPackage('Pulse Start')">Buy Package Now</button>
 async function selectPackage(name) {
-    if (!window.ethereum) return alert("ਕਿਰਪਾ ਕਰਕੇ Trust Wallet ਵਿੱਚ ਖੋਲ੍ਹੋ!");
+    if (!window.ethereum) return toast("Please open in Trust Wallet Browser!");
     
     try {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
+const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
-        
+
         const matrixContract = new ethers.Contract(
             contractAddress, 
             ["function register(address _referrer) external"], 
@@ -831,12 +819,21 @@ async function selectPackage(name) {
         const amount = ethers.utils.parseUnits("22", 18);
         const referrer = await signer.getAddress();
 
-        toast("USDT Approve ਹੋ ਰਿਹਾ ਹੈ...");
+        toast("Approving USDT Payment...");
         let tx1 = await usdtContract.approve(contractAddress, amount);
         await tx1.wait();
 
-        toast("Package Buy ਹੋ ਰਿਹਾ ਹੈ...");
+        toast("Processing Package Purchase...");
         let tx2 = await matrixContract.register(referrer);
+        await tx2.wait();
+
+        toast("Success! Package Bought Successfully.");
+    } catch (err) {
+        console.error(err);
+        toast("Transaction Cancelled or Insufficient Funds.");
+    }
+}
+
         await tx2.wait();
 
         alert("Package ਸਫਲਤਾਪੂਰਵਕ Buy ਹੋ ਗਿਆ ਹੈ!");
