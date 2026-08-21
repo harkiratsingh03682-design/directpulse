@@ -803,7 +803,7 @@ async function connectWallet(){
     if (!window.ethereum) return toast("Please open in Trust Wallet Browser!");
     
     try {
-const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
 
         const matrixContract = new ethers.Contract(
@@ -835,14 +835,7 @@ const provider = new ethers.providers.Web3Provider(window.ethereum);
     }
 }
 
-        await tx2.wait();
-
-        alert("Package ਸਫਲਤਾਪੂਰਵਕ Buy ਹੋ ਗਿਆ ਹੈ!");
-    } catch (err) {
-        console.error(err);
-        alert("ਪੇਮੈਂਟ ਫੇਲ ਹੋ ਗਈ ਜਾਂ Cancel ਹੋ ਗਈ!");
-    }
-}
+        
 
 
 
