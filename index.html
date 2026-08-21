@@ -798,7 +798,8 @@ async function connectWallet(){
 }
 
 <button class="btn" onclick="selectPackage('Pulse Start')">Buy Package Now</button>
-async function selectPackage(name) {
+<script>
+ async function selectPackage(name) {
     if (!window.ethereum) return toast("Please open in Trust Wallet Browser!");
     
     try {
